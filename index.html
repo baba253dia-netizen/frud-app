@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adhésion FRUD</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; padding: 20px; background-color: #f4f4f4; }
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-top: 8px solid #2B4C9B; width: 100%; max-width: 400px; }
+        h2 { text-align: center; color: #2B4C9B; }
+        label { display: block; margin-top: 15px; font-weight: bold; font-size: 12px; }
+        input, select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; margin-top: 20px; background-color: #ccc; color: white; border: none; font-weight: bold; cursor: not-allowed; }
+        .active { background-color: #2B4C9B; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>ADHÉSION FRUD</h2>
+        <label>NOM & PRÉNOM</label>
+        <input type="text" id="nom" placeholder="Votre nom complet">
+        
+        <label>NNI (10 CHIFFRES)</label>
+        <input type="text" id="nni" maxlength="10" placeholder="Ex: 1234567890">
+        
+        <label>WILAYA</label>
+        <select id="wilaya">
+            <option value="">Choisir...</option>
+            <option>Nouakchott Ouest</option>
+            <option>Nouakchott Nord</option>
+            <option>Nouakchott Sud</option>
+            <option>Trarza</option>
+            <option>Brakna</option>
+        </select>
+
+        <button id="btn" disabled>CONTINUER</button>
+    </div>
+
+    <script>
+        const nniInput = document.getElementById('nni');
+        const nomInput = document.getElementById('nom');
+        const wilayaInput = document.getElementById('wilaya');
+        const btn = document.getElementById('btn');
+
+        function verifier() {
+            const isNniValid = nniInput.value.length === 10;
+            const isFormValid = isNniValid && nomInput.value.length > 2 && wilayaInput.value !== "";
+            
+            if (isFormValid) {
+                btn.disabled = false;
+                btn.classList.add('active');
+            } else {
+                btn.disabled = true;
+                btn.classList.remove('active');
+            }
+        }
+
+        [nniInput, nomInput, wilayaInput].forEach(el => el.addEventListener('input', verifier));
+        nniInput.addEventListener('input', (e) => e.target.value = e.target.value.replace(/\D/g, ''));
+    </script>
+</body>
+</html>
