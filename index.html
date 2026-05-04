@@ -1,8 +1,258 @@
-<div class="horse-wrap" style="width: 130px; height: 130px; background: white; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; border: 4px solid #cc0000; box-shadow: 0 0 20px rgba(204,0,0,0.4); overflow: hidden;">
-  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width: 85%; height: 85%;">
-    <!-- Silhouette simplifiée et stylisée du cheval du FRUD -->
-    <path fill="#000" d="M30,75 L35,85 L42,72 L48,88 L55,70 L70,75 L62,55 C65,45 60,30 45,25 C30,20 20,35 25,45 L22,50 C15,60 20,70 30,75 Z M45,35 C48,35 50,38 50,40 C50,42 48,45 45,45 C42,45 40,42 40,40 C40,38 42,35 45,35 Z" />
-    <!-- Socle/Ligne de base -->
-    <rect x="25" y="88" width="50" height="3" rx="1.5" fill="#cc0000"/>
-  </svg>
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FRUD-ESPOIR MAURITANIE — Adhésion</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Barlow+Condensed:wght@300;400;500;600;700&family=Noto+Sans+Arabic:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{--green:#1a5c2a;--green-light:#2d8044;--gold:#c9a84c;--gold-light:#e8c97a;--red:#c0392b;--cream:#f8f4ec;--dark:#0a130d;--muted:#6b8c72;--shadow:0 20px 60px rgba(0,0,0,0.15);}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--dark);font-family:'Barlow Condensed',sans-serif;color:#1c2e22;min-height:100vh;overflow-x:hidden;}
+.bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse at 15% 15%,rgba(26,92,42,.3),transparent 55%),radial-gradient(ellipse at 85% 85%,rgba(201,168,76,.12),transparent 50%),#0a130d;}
+.bg::after{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 48px,rgba(26,92,42,.05) 48px,rgba(26,92,42,.05) 49px),repeating-linear-gradient(90deg,transparent,transparent 48px,rgba(26,92,42,.05) 48px,rgba(26,92,42,.05) 49px);}
+header{position:relative;z-index:10;text-align:center;padding:36px 20px 24px;animation:fadeDown .7s ease both;}
+
+/* MODIFICATION LOGO : Texte FRUD dans le cercle */
+.logo-wrap{display:inline-flex;align-items:center;justify-content:center;width:88px;height:88px;border-radius:50%;background:white;border:3px solid var(--gold);box-shadow:0 0 40px rgba(201,168,76,.25),0 8px 30px rgba(0,0,0,.4);margin-bottom:14px;overflow:hidden;padding:5px;}
+.logo-text-inner{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:var(--dark);letter-spacing:1px;}
+
+.party-name{font-family:'Cormorant Garamond',serif;font-size:clamp(18px,5vw,32px);font-weight:700;color:var(--cream);letter-spacing:.04em;}
+.party-ar{font-family:'Noto Sans Arabic',sans-serif;font-size:13px;color:var(--gold);margin-top:4px;}
+.party-sub{font-size:10px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase;margin-top:5px;}
+.lang-bar{display:flex;gap:8px;justify-content:center;margin-top:16px;}
+.lang-btn{padding:4px 14px;border-radius:20px;border:1px solid rgba(201,168,76,.25);background:transparent;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:.1em;cursor:pointer;transition:all .2s;}
+.lang-btn.active,.lang-btn:hover{background:var(--gold);color:var(--dark);border-color:var(--gold);}
+main{position:relative;z-index:10;max-width:820px;margin:0 auto;padding:0 16px 60px;}
+.gate-card{background:rgba(255,255,255,.04);backdrop-filter:blur(24px);border:1px solid rgba(201,168,76,.2);border-radius:18px;padding:44px 36px;text-align:center;box-shadow:var(--shadow);animation:fadeUp .6s ease both;}
+.gate-ico{font-size:50px;margin-bottom:16px;animation:pulse 2.5s infinite;}
+.gate-title{font-family:'Cormorant Garamond',serif;font-size:25px;color:var(--cream);margin-bottom:8px;}
+.gate-sub{font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.6;}
+.code-row{display:flex;gap:9px;justify-content:center;margin-bottom:20px;flex-wrap:wrap;}
+.cbox{width:46px;height:56px;border-radius:10px;border:2px solid rgba(201,168,76,.25);background:rgba(255,255,255,.04);color:var(--cream);font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:700;text-align:center;outline:none;transition:all .2s;text-transform:uppercase;}
+.cbox:focus{border-color:var(--gold);background:rgba(201,168,76,.08);box-shadow:0 0 0 3px rgba(201,168,76,.15);}
+.btn-verify{background:linear-gradient(135deg,var(--green),var(--green-light));border:none;border-radius:8px;padding:12px 32px;color:white;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;box-shadow:0 4px 18px rgba(26,92,42,.4);margin-top:4px;}
+.msg-area{min-height:36px;margin-top:14px;font-size:13px;}
+.steps{display:flex;align-items:center;justify-content:center;margin-bottom:28px;}
+.step{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;max-width:130px;}
+.step-c{width:32px;height:32px;border-radius:50%;border:2px solid rgba(201,168,76,.25);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--muted);background:rgba(10,19,13,.9);transition:all .3s;}
+.step.active .step-c{border-color:var(--gold);color:var(--gold);box-shadow:0 0 16px rgba(201,168,76,.3);background:rgba(201,168,76,.1);}
+.step.done .step-c{border-color:var(--green-light);color:var(--green-light);background:rgba(26,92,42,.2);}
+.step-l{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-align:center;}
+.step-line{flex:1;height:1px;background:rgba(201,168,76,.18);max-width:55px;margin-bottom:18px;}
+.card{background:rgba(255,255,255,.03);backdrop-filter:blur(20px);border:1px solid rgba(201,168,76,.14);border-radius:16px;padding:32px;box-shadow:var(--shadow);}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.ff{grid-column:1/-1;}
+.field{display:flex;flex-direction:column;gap:5px;}
+label{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);font-weight:500;}
+input,select,textarea{background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.18);border-radius:8px;padding:10px 13px;color:var(--cream);font-family:'Barlow Condensed',sans-serif;font-size:15px;transition:all .2s;outline:none;width:100%;}
+
+/* MODIFICATION PAIEMENT : Style de la boîte */
+.pay-zone{background:rgba(201,168,76,.08);border:1px solid var(--gold);border-radius:10px;padding:18px;margin-top:20px;}
+.pay-amount{font-size:28px;font-weight:700;color:var(--gold);font-family:'Cormorant Garamond',serif;}
+
+.btn-primary{background:linear-gradient(135deg,var(--green),var(--green-light));border:none;border-radius:8px;padding:12px 26px;color:white;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;box-shadow:0 4px 18px rgba(26,92,42,.4);width:100%;margin-top:20px;}
+#card-wrap{perspective:1200px;margin:0 auto 22px;max-width:480px;}
+#mem-card{width:100%;border-radius:14px;background:linear-gradient(135deg,#0a2814,#1a5c2a 45%,#0a2814);border:1.5px solid rgba(201,168,76,.45);padding:20px 22px 18px;position:relative;overflow:hidden;box-shadow:0 22px 65px rgba(0,0,0,.55);display:flex;flex-direction:column;justify-content:space-between;min-height:260px;}
+.mc-photo{width:64px;height:64px;border-radius:8px;flex-shrink:0;border:1.5px solid rgba(201,168,76,.45);overflow:hidden;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;}
+.mc-photo img{width:100%;height:100%;object-fit:cover;display:none;}
+.screen{display:none;}.screen.active{display:block;}
+.toast{position:fixed;bottom:20px;right:20px;z-index:999;background:var(--green);color:white;padding:12px 17px;border-radius:10px;font-size:13px;box-shadow:var(--shadow);transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none;}
+.toast.show{transform:translateY(0);opacity:1;}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<header>
+  <!-- LOGO MODIFIÉ -->
+  <div class="logo-wrap"><span class="logo-text-inner">FRUD</span></div>
+  <div class="party-name">FRUD-ESPOIR MAURITANIE</div>
+  <div class="party-ar">الجبهة الجمهورية للوحدة والديمقراطية</div>
+  <div class="party-sub">Plateforme officielle d'adhésion</div>
+  <div class="lang-bar">
+    <button class="lang-btn active">Français</button>
+    <button class="lang-btn">العربية</button>
+  </div>
+</header>
+<main>
+
+<!-- GATE -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-ico">🔐</div>
+    <div class="gate-title">Accès réservé aux membres</div>
+    <div class="gate-sub">Entrez votre code unique pour commencer l'enrôlement.</div>
+    <div class="code-row">
+      <input class="cbox" id="c0" maxlength="1" oninput="ci(0)">
+      <input class="cbox" id="c1" maxlength="1" oninput="ci(1)">
+      <input class="cbox" id="c2" maxlength="1" oninput="ci(2)">
+      <input class="cbox" id="c3" maxlength="1" oninput="ci(3)">
+      <input class="cbox" id="c4" maxlength="1" oninput="ci(4)">
+      <input class="cbox" id="c5" maxlength="1" oninput="ci(5)">
+    </div>
+    <button class="btn-verify" onclick="verifyCode()">Vérifier le code</button>
+    <div class="msg-area" id="msg"></div>
+  </div>
 </div>
+
+<!-- FORM -->
+<div id="form-area" style="display:none">
+  <div class="steps">
+    <div class="step active" id="st1"><div class="step-c">1</div><div class="step-l">Identité</div></div>
+    <div class="step-line"></div>
+    <div class="step" id="st2"><div class="step-c">2</div><div class="step-l">Paiement</div></div>
+    <div class="step-line"></div>
+    <div class="step" id="st3"><div class="step-c">3</div><div class="step-l">Carte</div></div>
+  </div>
+
+  <div class="screen active" id="sc1">
+    <div class="card">
+      <div class="sec-title">Inscription</div>
+      <div class="sec-sub">Informations personnelles</div>
+      <div class="form-grid">
+        <div class="field ff">
+          <label>Photo d'identité</label>
+          <div class="photo-zone">
+            <input type="file" id="ph-in" accept="image/*" onchange="prevPh(event)">
+            <img id="photo-prev" src="" alt="">
+            <div id="ph-ico">📷</div>
+            <div id="ph-txt">Cliquez pour ajouter une photo</div>
+          </div>
+        </div>
+        <div class="field"><label>Nom complet</label><input type="text" id="nom" placeholder="PRÉNOM ET NOM"></div>
+        <div class="field">
+          <label>N° Identité (NNI)</label>
+          <input type="text" id="nni" placeholder="10 chiffres" maxlength="10" oninput="checkDuplicate()">
+          <span id="nni-err" style="color:var(--red); font-size:11px; display:none;">⚠️ NNI déjà enregistré !</span>
+        </div>
+        <div class="field ff"><label>Wilaya</label><input type="text" id="wilaya" placeholder="Ex: Nouakchott Ouest"></div>
+      </div>
+      <button class="btn-primary" id="btn-next" onclick="setStep(2)">Suivant →</button>
+    </div>
+  </div>
+
+  <div class="screen" id="sc2">
+    <div class="card">
+      <div class="sec-title">Validation & Paiement</div>
+      <div class="pay-zone">
+        <div class="pay-amount">50 UM</div>
+        <p style="color:var(--muted); font-size:12px;">Frais d'adhésion via Bankily ou Masrivi</p>
+        <div class="field" style="margin-top:15px;">
+          <label>N° de Transaction / Reçu</label>
+          <input type="text" id="txn" placeholder="ID de l'opération">
+        </div>
+      </div>
+      <button class="btn-primary" onclick="submitForm()">Confirmer l'adhésion ✓</button>
+    </div>
+  </div>
+
+  <div class="screen" id="sc3">
+    <div class="card">
+      <div id="card-wrap">
+        <div id="mem-card">
+          <div class="mc-head">
+            <div class="mc-logo" style="display:flex; align-items:center; justify-content:center; background:white; color:var(--dark); font-weight:700; font-size:12px;">FRUD</div>
+            <div>
+              <div class="mc-party">FRUD-ESPOIR MAURITANIE</div>
+              <div class="mc-cardtype">CARTE D'ADHÉRENT OFFICIELLE</div>
+            </div>
+          </div>
+          <div class="mc-body">
+            <div class="mc-photo"><img id="mc-photo" src="" alt=""><span id="mc-pi">👤</span></div>
+            <div class="mc-info">
+              <div class="mc-name" id="mc-name">PRÉNOM NOM</div>
+              <div class="mc-det">NNI: <span id="mc-nni-val">—</span></div>
+              <div class="mc-det">📍 <span id="mc-loc">—</span></div>
+            </div>
+            <div class="mc-qr" id="mc-qr"></div>
+          </div>
+          <div class="mc-stripe"></div>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="window.print()">Télécharger ma carte</button>
+    </div>
+  </div>
+</div>
+
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPA_URL = 'https://sndamkcjaexxmvimobbg.supabase.co';
+const SUPA_KEY = 'sb_publishable_c9yp6ZBGQy943ti3ZY9Z3A_SZHa6YiJ';
+let photoData = null;
+
+async function supa(method, path, body) {
+  const res = await fetch(SUPA_URL + path, {
+    method,
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY, 'Content-Type': 'application/json' },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  return res.json();
+}
+
+// 1. SÉCURITÉ : DOUBLE ENRÔLEMENT
+async function checkDuplicate() {
+  const nni = document.getElementById('nni').value;
+  const err = document.getElementById('nni-err');
+  const btn = document.getElementById('btn-next');
+  if(nni.length === 10) {
+    const data = await supa('GET', `/rest/v1/membres?nni=eq.${nni}&select=*`);
+    if(data.length > 0) { err.style.display='block'; btn.disabled=true; }
+    else { err.style.display='none'; btn.disabled=false; }
+  }
+}
+
+// 2. LOGIQUE GATE & FORM
+function ci(i) {
+  if(document.getElementById('c'+i).value && i<5) document.getElementById('c'+(i+1)).focus();
+}
+
+async function verifyCode() {
+  const code = [0,1,2,3,4,5].map(i => document.getElementById('c'+i).value).join('');
+  const data = await supa('GET', `/rest/v1/codes?code=eq.${code}&used=eq.false`);
+  if(data.length > 0) {
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('form-area').style.display = 'block';
+  } else { alert("Code invalide ou expiré"); }
+}
+
+function prevPh(e) {
+  const reader = new FileReader();
+  reader.onload = ev => { 
+    photoData = ev.target.result; 
+    document.getElementById('photo-prev').src = photoData; 
+    document.getElementById('photo-prev').style.display='block';
+  };
+  reader.readAsDataURL(e.target.files[0]);
+}
+
+function setStep(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('sc' + n).classList.add('active');
+}
+
+async function submitForm() {
+  const nni = document.getElementById('nni').value;
+  const nom = document.getElementById('nom').value;
+  const txn = document.getElementById('txn').value;
+  if(!txn) return alert("Veuillez saisir le numéro de transaction");
+
+  await supa('POST', '/rest/v1/membres', { nni, nom_complet: nom, transaction_id: txn, wilaya: document.getElementById('wilaya').value });
+  
+  document.getElementById('mc-name').textContent = nom.toUpperCase();
+  document.getElementById('mc-nni-val').textContent = nni;
+  document.getElementById('mc-loc').textContent = document.getElementById('wilaya').value;
+  if(photoData) { document.getElementById('mc-photo').src = photoData; document.getElementById('mc-photo').style.display='block'; document.getElementById('mc-pi').style.display='none'; }
+  
+  new QRCode(document.getElementById("mc-qr"), { text: nni, width: 50, height: 50 });
+  setStep(3);
+}
+</script>
+</body>
+</html>
