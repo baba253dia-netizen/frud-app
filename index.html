@@ -1,518 +1,122 @@
 <!DOCTYPE html>
-<html lang="fr" dir="ltr">
+<html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FRUD-JOD — Carte de Membre</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Barlow+Condensed:wght@300;400;500;600;700&family=Noto+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<style>
-:root{--noir:#111;--rouge:#cc0000;--blanc:#fff;--gris-clair:#f5f5f5;--gris-mid:#e0e0e0;--muted:#777;--shadow:0 8px 40px rgba(0,0,0,0.22);}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:#1a1a1a;font-family:'Barlow Condensed',sans-serif;min-height:100vh;}
-header{background:#111;padding:36px 20px 28px;text-align:center;border-bottom:3px solid var(--rouge);}
-.horse-wrap{width:130px;height:130px;background:white;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;border:3px solid var(--rouge);box-shadow:0 0 0 6px rgba(204,0,0,.15),0 8px 30px rgba(0,0,0,.5);margin-bottom:18px;overflow:hidden;padding:10px;}
-.horse-wrap svg{width:110px;height:110px;}
-.party-name{font-family:'Cormorant Garamond',serif;font-size:clamp(22px,6vw,38px);font-weight:700;color:var(--blanc);letter-spacing:.06em;}
-.red-bar{width:70px;height:3px;background:var(--rouge);margin:8px auto;}
-.party-ar{font-family:'Noto Sans Arabic',sans-serif;font-size:14px;color:#aaa;margin-top:4px;}
-.party-sub{font-size:10px;color:#666;letter-spacing:.22em;text-transform:uppercase;margin-top:5px;}
-.lang-bar{display:flex;gap:8px;justify-content:center;margin-top:18px;}
-.lang-btn{padding:5px 16px;border-radius:20px;border:1px solid #444;background:transparent;color:#888;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:.1em;cursor:pointer;transition:all .2s;}
-.lang-btn.active,.lang-btn:hover{background:var(--rouge);color:white;border-color:var(--rouge);}
-main{max-width:780px;margin:0 auto;padding:28px 16px 60px;}
-.gate-card{background:var(--blanc);border-radius:14px;padding:40px 32px;text-align:center;box-shadow:var(--shadow);border-top:4px solid var(--rouge);animation:fadeUp .5s ease both;}
-@media(max-width:480px){.gate-card{padding:28px 16px;}}
-.gate-ico{font-size:48px;margin-bottom:14px;}
-.gate-title{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--noir);margin-bottom:8px;font-weight:700;}
-.gate-sub{font-size:14px;color:var(--muted);margin-bottom:6px;line-height:1.6;}
-.gate-ar{font-family:'Noto Sans Arabic',sans-serif;font-size:13px;color:var(--muted);margin-bottom:26px;}
-.code-label{font-size:13px;font-weight:700;color:var(--noir);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px;}
-.code-row{display:flex;gap:9px;justify-content:center;margin-bottom:20px;flex-wrap:wrap;}
-.cbox{width:48px;height:58px;border-radius:8px;border:2px solid var(--gris-mid);background:var(--gris-clair);color:var(--noir);font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;text-align:center;outline:none;transition:all .2s;text-transform:uppercase;}
-.cbox:focus{border-color:var(--rouge);background:white;box-shadow:0 0 0 3px rgba(204,0,0,.1);}
-.cbox.filled{border-color:var(--noir);color:var(--rouge);}
-.cbox.err{border-color:var(--rouge)!important;animation:shake .35s ease;}
-.cbox:disabled{opacity:.35;}
-.btn-verify{background:var(--noir);border:none;border-radius:8px;padding:13px 32px;color:white;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .2s;width:100%;}
-.btn-verify:hover{background:var(--rouge);}
-.btn-verify:disabled{opacity:.45;cursor:not-allowed;}
-.msg-area{min-height:32px;margin-top:12px;font-size:13px;}
-.msg-err{color:var(--rouge);}.msg-ok{color:#222;}.msg-info{color:var(--muted);}
-.lock-box{background:#fff5f5;border:1px solid #fcc;border-radius:10px;padding:14px;margin-top:14px;display:none;}
-.lock-box p{color:var(--rouge);font-size:13px;margin-bottom:6px;}
-.countdown{font-size:30px;font-weight:700;color:var(--rouge);font-family:'Cormorant Garamond',serif;}
-.spinner{display:inline-block;width:14px;height:14px;border:2px solid #ccc;border-top-color:var(--rouge);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:5px;}
-@keyframes spin{to{transform:rotate(360deg)}}
-.steps{display:flex;align-items:center;justify-content:center;margin-bottom:22px;}
-.step{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;max-width:110px;}
-.step-c{width:34px;height:34px;border-radius:50%;border:2px solid #ccc;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#aaa;background:white;transition:all .3s;}
-.step.active .step-c{border-color:var(--rouge);color:var(--rouge);box-shadow:0 0 0 3px rgba(204,0,0,.12);}
-.step.done .step-c{border-color:var(--noir);color:white;background:var(--noir);}
-.step-l{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#aaa;text-align:center;}
-.step.active .step-l{color:var(--rouge);font-weight:600;}
-.step-line{flex:1;height:2px;background:#ddd;max-width:40px;margin-bottom:18px;}
-.card{background:white;border-radius:12px;padding:28px;box-shadow:var(--shadow);border-top:4px solid var(--rouge);}
-@media(max-width:540px){.card{padding:18px 12px;}}
-.sec-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:var(--noir);margin-bottom:4px;}
-.sec-ar{font-family:'Noto Sans Arabic',sans-serif;font-size:13px;color:var(--muted);margin-bottom:20px;}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-@media(max-width:520px){.form-grid{grid-template-columns:1fr;}}
-.ff{grid-column:1/-1;}
-.field{display:flex;flex-direction:column;gap:4px;}
-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--noir);font-weight:700;}
-label .ar{font-family:'Noto Sans Arabic',sans-serif;font-size:10px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;margin-right:4px;}
-input,select,textarea{background:var(--gris-clair);border:1px solid var(--gris-mid);border-radius:6px;padding:10px 12px;color:var(--noir);font-family:'Barlow Condensed',sans-serif;font-size:15px;transition:all .2s;outline:none;width:100%;}
-input:focus,select:focus,textarea:focus{border-color:var(--rouge);background:white;box-shadow:0 0 0 3px rgba(204,0,0,.08);}
-.photo-zone{border:2px dashed var(--gris-mid);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
-.photo-zone:hover{border-color:var(--rouge);}
-.photo-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
-#photo-prev{width:70px;height:70px;border-radius:50%;object-fit:cover;border:2px solid var(--noir);margin:0 auto 8px;display:none;}
-.type-sel{display:flex;gap:10px;margin-bottom:18px;}
-.type-opt{flex:1;padding:13px 8px;border-radius:8px;border:2px solid var(--gris-mid);cursor:pointer;text-align:center;transition:all .2s;background:white;}
-.type-opt:hover,.type-opt.sel{border-color:var(--rouge);}
-.type-opt.sel{background:#fff5f5;box-shadow:0 0 0 1px var(--rouge);}
-.pay-section{background:var(--gris-clair);border-radius:10px;padding:20px;margin-bottom:20px;border-left:4px solid var(--rouge);}
-.pay-title{font-size:13px;font-weight:700;color:var(--rouge);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;}
-.pay-amount-big{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:700;color:var(--noir);display:inline-block;}
-.pay-num{font-size:20px;font-weight:700;color:var(--noir);background:white;border:2px solid var(--noir);border-radius:8px;padding:8px 20px;display:inline-block;letter-spacing:.12em;margin:10px 0;}
-.pay-hint{font-size:12px;color:var(--muted);margin-bottom:4px;}
-.pay-ar{font-family:'Noto Sans Arabic',sans-serif;font-size:12px;color:var(--muted);margin-bottom:8px;}
-.pay-apps{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
-.pay-app{background:var(--noir);color:white;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;}
-.pay-confirm{display:flex;align-items:center;gap:8px;margin-top:14px;padding:12px;background:white;border-radius:8px;border:1px solid var(--gris-mid);}
-.pay-confirm input[type=checkbox]{width:18px;height:18px;accent-color:var(--rouge);cursor:pointer;flex-shrink:0;}
-.pay-confirm label{font-size:13px;color:var(--noir);cursor:pointer;font-weight:600;text-transform:none;letter-spacing:0;}
-.btn-primary{background:var(--noir);border:none;border-radius:8px;padding:13px 26px;color:white;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;width:100%;margin-top:18px;}
-.btn-primary:hover{background:var(--rouge);}
-.btn-outline{background:transparent;border:2px solid #ccc;border-radius:8px;padding:11px 18px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:14px;cursor:pointer;transition:all .2s;}
-.btn-outline:hover{border-color:var(--noir);color:var(--noir);}
-.btn-rouge{background:var(--rouge);border:none;border-radius:8px;padding:12px 24px;color:white;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;}
-.btn-rouge:hover{background:#a00;}
-#card-wrap{margin:0 auto 20px;max-width:580px;}
-#mem-card{width:100%;background:white;border:2px solid #bbb;border-radius:6px;padding:18px 22px 14px;position:relative;box-shadow:0 8px 30px rgba(0,0,0,.2);font-family:'Barlow Condensed',sans-serif;}
-.mc-rouge-top{position:absolute;top:0;left:0;right:0;height:5px;background:var(--rouge);}
-.mc-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
-.mc-head-left{font-size:9px;color:var(--muted);line-height:1.7;max-width:130px;}
-.mc-head-left strong{color:var(--noir);font-size:10px;display:block;}
-.mc-center{text-align:center;}
-.mc-horse-sm{width:52px;height:52px;margin:0 auto 3px;}
-.mc-horse-sm svg{width:52px;height:52px;}
-.mc-jod{font-size:12px;font-weight:700;color:var(--noir);}
-.rouge-line-sm{width:36px;height:2px;background:var(--rouge);margin:3px auto;}
-.mc-jod-ar{font-family:'Noto Sans Arabic',sans-serif;font-size:9px;color:var(--muted);}
-.mc-jod-fr{font-size:7px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;}
-.mc-stamp{width:76px;height:76px;}
-.mc-stamp svg{width:76px;height:76px;}
-.mc-titre-box{text-align:center;border-top:1px solid #ddd;border-bottom:1px solid #ddd;padding:7px 0;margin-bottom:12px;}
-.mc-titre-ar{font-family:'Noto Sans Arabic',sans-serif;font-size:15px;font-weight:700;color:var(--noir);}
-.mc-titre-fr{font-size:18px;font-weight:700;color:var(--noir);letter-spacing:.08em;}
-.mc-body{display:flex;gap:10px;align-items:flex-start;}
-.mc-fields{flex:1;}
-.mc-row{display:flex;justify-content:space-between;align-items:center;border-bottom:1px dotted #ccc;padding:4px 0;gap:4px;}
-.mc-lbl{font-size:10px;font-weight:700;color:var(--noir);min-width:100px;flex-shrink:0;}
-.mc-val{font-size:10px;font-weight:600;color:var(--noir);text-align:center;flex:1;}
-.mc-lbl-ar{font-family:'Noto Sans Arabic',sans-serif;font-size:10px;font-weight:600;color:var(--noir);min-width:65px;text-align:right;flex-shrink:0;}
-.mc-right{display:flex;flex-direction:column;align-items:center;gap:8px;flex-shrink:0;}
-.mc-photo-box{width:68px;height:80px;border:1.5px solid #999;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--gris-clair);overflow:hidden;}
-.mc-photo-box img{width:100%;height:100%;object-fit:cover;}
-.mc-qr-box{background:white;padding:3px;border:1px solid #ddd;border-radius:4px;}
-.mc-qr-box canvas,.mc-qr-box img{width:44px!important;height:44px!important;}
-.mc-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:6px;border-top:1px solid #eee;}
-.mc-num-id{font-size:9px;color:var(--muted);}
-.mc-num-id strong{color:var(--noir);}
-.mc-president{text-align:center;border:1px solid #999;border-radius:20px;padding:4px 14px;}
-.mc-president-ar{font-family:'Noto Sans Arabic',sans-serif;font-size:9px;color:var(--noir);}
-.mc-president-fr{font-size:9px;font-weight:700;color:var(--noir);}
-.mc-sign{width:50px;height:1px;background:var(--noir);margin:3px auto 0;}
-.mc-exp{font-size:9px;color:var(--muted);}
-.mc-rouge-bot{position:absolute;bottom:0;left:0;right:0;height:4px;background:var(--rouge);}
-.stats{display:flex;gap:1px;margin-top:22px;border-radius:8px;overflow:hidden;border:1px solid #333;}
-.stat{flex:1;padding:12px 8px;text-align:center;background:#222;}
-.stat-n{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--rouge);font-weight:700;line-height:1;}
-.stat-l{font-size:10px;color:#888;letter-spacing:.1em;text-transform:uppercase;margin-top:2px;}
-.screen{display:none;}.screen.active{display:block;}
-.suc-ico{font-size:46px;text-align:center;margin-bottom:10px;}
-.suc-title{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--noir);text-align:center;margin-bottom:4px;font-weight:700;}
-.suc-sub{color:var(--muted);text-align:center;font-size:14px;margin-bottom:22px;}
-.act-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
-.divider{height:1px;background:#eee;margin:18px 0;}
-.badge{display:inline-flex;align-items:center;gap:6px;background:#fff5f5;border:1px solid #fcc;border-radius:20px;padding:5px 14px;font-size:12px;color:var(--rouge);margin-bottom:16px;}
-.toast{position:fixed;bottom:20px;right:20px;z-index:999;background:var(--noir);color:white;padding:12px 17px;border-radius:8px;font-size:13px;box-shadow:var(--shadow);transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none;}
-.toast.show{transform:translateY(0);opacity:1;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRUD - Adhésion</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; background-color: #ffffff; margin: 0; display: flex; flex-direction: column; align-items: center; padding: 20px; color: #000; }
+        
+        /* Formulaire */
+        .container { background: white; padding: 30px; border: 1px solid #000; width: 100%; max-width: 450px; text-align: center; position: relative; }
+        .logo-box { width: 120px; height: auto; margin-bottom: 10px; }
+        .red-line-top { height: 3px; background: #E21F26; width: 80px; margin: 5px auto 25px; }
+        h2 { margin: 0; font-size: 24px; font-weight: bold; text-transform: uppercase; }
+        .form-group { text-align: left; margin-bottom: 20px; }
+        label { display: block; font-weight: bold; font-size: 14px; margin-bottom: 8px; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #000; border-radius: 0; box-sizing: border-box; font-size: 16px; }
+        
+        button { width: 100%; padding: 18px; background: #000; color: white; border: none; font-weight: bold; font-size: 16px; cursor: not-allowed; opacity: 0.3; margin-top: 10px; }
+        button.active { cursor: pointer; opacity: 1; }
+
+        /* Carte de Membre */
+        #memberCard { display: none; width: 100%; max-width: 700px; border: 2px solid #000; padding: 30px; background: #fff; position: relative; box-sizing: border-box; min-height: 450px; }
+        .header-table { width: 100%; display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; margin-bottom: 20px; }
+        .center-content { text-align: center; }
+        .card-title { font-size: 28px; font-weight: bold; margin: 20px 0; border-bottom: 2px solid #000; display: inline-block; padding: 0 30px; }
+        .info-row { display: flex; justify-content: space-between; border-bottom: 1px dotted #000; margin-bottom: 15px; padding-bottom: 5px; font-size: 18px; }
+        .footer-red { position: absolute; bottom: 30px; left: 10%; right: 10%; height: 3px; background: #E21F26; }
+        .president-box { text-align: center; margin-top: 40px; font-weight: bold; }
+    </style>
 </head>
 <body>
 
-<header>
-  <div class="horse-wrap">
-    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-      <path fill="#111" d="M155,38c-4-3-9-3-13,1l-6,6c-4-6-11-10-17-10c-5,0-9,2-11,5l-17-4c-7-2-13,0-17,5c-4,4-4,10-2,15l4,8c-6,4-10,11-10,19c0,7,3,13,7,17l-10,32c-2,6,0,12,4,14c3,2,6,1,9-1l13-21l4,6l-6,19c-2,6,0,11,4,13c3,2,7,1,9-2l10-19l6,2l2,17c0,5,4,8,8,8c5,0,8-4,8-8l-2-25c4-2,8-6,10-11l17,6c6,2,12,0,14-6c2-5,0-10-4-13l-13-6c2-4,2-8,0-12l8-10c6-6,6-15,4-21C161,43,158,40,155,38z"/>
-    </svg>
-  </div>
-  <div class="party-name">FRUD — جود</div>
-  <div class="red-bar"></div>
-  <div class="party-ar">الجبهة الجمهورية للوحدة والديمقراطية</div>
-  <div class="party-sub">Front Républicain pour l'Unité et la Démocratie</div>
-  <div class="lang-bar">
-    <button class="lang-btn active" onclick="setLang('fr',event)">Français</button>
-    <button class="lang-btn" onclick="setLang('ar',event)">العربية</button>
-  </div>
-</header>
-
-<main>
-
-<!-- GATE -->
-<div id="gate">
-  <div class="gate-card">
-    <div class="gate-ico">🔐</div>
-    <div class="gate-title">Accès réservé aux membres</div>
-    <div class="gate-sub">Entrez votre code d'accès unique à 6 caractères.</div>
-    <div class="gate-ar">أدخل رمز الوصول الخاص بك المكون من 6 أحرف</div>
-    <div class="code-label">Code d'accès — رمز الدخول</div>
-    <div class="code-row">
-      <input class="cbox" id="c0" maxlength="1" oninput="ci(0)" onkeydown="ck(event,0)" autocomplete="off">
-      <input class="cbox" id="c1" maxlength="1" oninput="ci(1)" onkeydown="ck(event,1)" autocomplete="off">
-      <input class="cbox" id="c2" maxlength="1" oninput="ci(2)" onkeydown="ck(event,2)" autocomplete="off">
-      <input class="cbox" id="c3" maxlength="1" oninput="ci(3)" onkeydown="ck(event,3)" autocomplete="off">
-      <input class="cbox" id="c4" maxlength="1" oninput="ci(4)" onkeydown="ck(event,4)" autocomplete="off">
-      <input class="cbox" id="c5" maxlength="1" oninput="ci(5)" onkeydown="ck(event,5)" autocomplete="off">
-    </div>
-    <button class="btn-verify" id="btn-v" onclick="verifyCode()">Vérifier — التحقق</button>
-    <div class="msg-area" id="msg"></div>
-    <div class="lock-box" id="lock-box">
-      <p>Trop de tentatives. Veuillez patienter.</p>
-      <div class="countdown" id="cd"></div>
-    </div>
-  </div>
-</div>
-
-<!-- FORM -->
-<div id="form-area" style="display:none">
-  <div style="text-align:center;margin-bottom:18px;">
-    <div class="badge">✅ Code validé — رمز صحيح</div>
-  </div>
-  <div class="steps">
-    <div class="step active" id="st1"><div class="step-c">1</div><div class="step-l">Identité</div></div>
-    <div class="step-line"></div>
-    <div class="step" id="st2"><div class="step-c">2</div><div class="step-l">Localisation</div></div>
-    <div class="step-line"></div>
-    <div class="step" id="st3"><div class="step-c">3</div><div class="step-l">Paiement</div></div>
-    <div class="step-line"></div>
-    <div class="step" id="st4"><div class="step-c">4</div><div class="step-l">Carte</div></div>
-  </div>
-
-  <!-- SC1 -->
-  <div class="screen active" id="sc1">
-    <div class="card">
-      <div class="sec-title">Identité</div>
-      <div class="sec-ar">معلوماتك الشخصية</div>
-      <div class="type-sel">
-        <div class="type-opt sel" onclick="pickType(this,'int')">
-          <div style="font-size:22px;margin-bottom:4px">🇲🇷</div>
-          <div style="font-size:13px;color:var(--noir);font-weight:700">Mauritanie</div>
-          <div style="font-family:'Noto Sans Arabic',sans-serif;font-size:11px;color:var(--muted)">داخل البلاد</div>
+    <!-- SECTION FORMULAIRE -->
+    <div id="formContainer" class="container">
+        <svg viewBox="0 0 100 100" class="logo-box" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20,80 C30,70 40,40 50,30 C60,20 80,20 85,35 C90,50 70,60 60,80" stroke="black" fill="black"/>
+            <rect x="20" y="85" width="60" height="2" fill="black"/>
+        </svg>
+        <h2>FRUD - جود</h2>
+        <div class="red-line-top"></div>
+        
+        <div class="form-group">
+            <label>NOM & PRÉNOM / الاسم واللقب</label>
+            <input type="text" id="nom" placeholder="Saisir votre nom complet">
         </div>
-        <div class="type-opt" onclick="pickType(this,'dia')">
-          <div style="font-size:22px;margin-bottom:4px">🌍</div>
-          <div style="font-size:13px;color:var(--noir);font-weight:700">Diaspora</div>
-          <div style="font-family:'Noto Sans Arabic',sans-serif;font-size:11px;color:var(--muted)">خارج موريتانيا</div>
+        <div class="form-group">
+            <label>N° CIN (NNI) / رقم</label>
+            <input type="text" id="nni" maxlength="10" placeholder="10 chiffres obligatoires">
         </div>
-      </div>
-      <div class="form-grid">
-        <div class="field ff">
-          <label>Photo <span class="ar">الصورة</span></label>
-          <div class="photo-zone">
-            <input type="file" id="ph-in" accept="image/*" onchange="prevPh(event)">
-            <img id="photo-prev" src="" alt="">
-            <div id="ph-ico" style="font-size:30px;margin-bottom:6px">📷</div>
-            <div id="ph-txt" style="font-size:12px;color:var(--muted)">Cliquez pour ajouter une photo — انقر لإضافة صورة</div>
-          </div>
+        <div class="form-group">
+            <label>WILAYA / ولاية</label>
+            <select id="wilaya">
+                <option value="">Sélectionner...</option>
+                <option>Nouakchott Ouest</option>
+                <option>Nouakchott Nord</option>
+                <option>Nouakchott Sud</option>
+                <option>Trarza</option>
+                <option>Brakna</option>
+                <option>Dakhlet Nouadhibou</option>
+            </select>
         </div>
-        <div class="field"><label>Nom <span class="ar">اللقب</span></label><input type="text" id="nom" placeholder="OULD AHMED"></div>
-        <div class="field"><label>Prénom <span class="ar">الاسم</span></label><input type="text" id="pre" placeholder="Mohamed"></div>
-        <div class="field"><label>Date de naissance <span class="ar">تاريخ الميلاد</span></label><input type="date" id="dob"></div>
-        <div class="field"><label>Genre <span class="ar">الجنس</span></label>
-          <select id="gen"><option value="">—</option><option>Masculin / ذكر</option><option>Féminin / أنثى</option></select>
-        </div>
-        <div class="field"><label>N° CIN <span class="ar">رقم البطاقة</span></label><input type="text" id="nni" placeholder="1234567890" maxlength="10"></div>
-        <div class="field"><label>Téléphone <span class="ar">الهاتف</span></label><input type="tel" id="tel" placeholder="+222 XX XX XX XX"></div>
-        <div class="field ff"><label>Email <span class="ar">البريد الإلكتروني</span></label><input type="email" id="mail" placeholder="votre@email.com"></div>
-      </div>
-      <button class="btn-primary" onclick="next2()">Continuer →</button>
+        <button id="btnSubmit" disabled>GÉNÉRER MA CARTE DE MEMBRE</button>
     </div>
-    <div class="stats">
-      <div class="stat"><div class="stat-n" id="cnt-stat">—</div><div class="stat-l">Membres / أعضاء</div></div>
-      <div class="stat"><div class="stat-n">15</div><div class="stat-l">Wilayas / ولاية</div></div>
-      <div class="stat"><div class="stat-n">23</div><div class="stat-l">Pays / دولة</div></div>
-    </div>
-  </div>
 
-  <!-- SC2 -->
-  <div class="screen" id="sc2">
-    <div class="card">
-      <div class="sec-title">Localisation</div>
-      <div class="sec-ar">موقع الإقامة</div>
-      <div class="form-grid" id="loc-int">
-        <div class="field ff"><label>Wilaya <span class="ar">الولاية</span></label>
-          <select id="wilaya"><option value="">—</option>
-            <option>Hodh Ech Chargui</option><option>Hodh El Gharbi</option><option>Assaba</option>
-            <option>Gorgol</option><option>Brakna</option><option>Trarza</option><option>Adrar</option>
-            <option>Dakhlet Nouadhibou</option><option>Tagant</option><option>Guidimagha</option>
-            <option>Tiris Zemmour</option><option>Inchiri</option><option>Nouakchott Nord</option>
-            <option>Nouakchott Ouest</option><option>Nouakchott Sud</option>
-          </select>
+    <!-- SECTION CARTE GÉNÉRÉE -->
+    <div id="memberCard">
+        <div class="header-table">
+            <div style="text-align: left;">République Islamique de Mauritanie<br>Honneur - Fraternité - Justice</div>
+            <div style="text-align: right;">الجمهورية الإسلامية الموريتانية<br>شرف - إخاء - عدل</div>
         </div>
-        <div class="field"><label>Moughataa <span class="ar">المقاطعة</span></label><input type="text" id="mou" placeholder="Ex: Kiffa"></div>
-        <div class="field"><label>Commune <span class="ar">البلدية</span></label><input type="text" id="com" placeholder="Ex: Basra"></div>
-        <div class="field ff"><label>Quartier / Village <span class="ar">الحي / القرية</span></label><input type="text" id="qrt" placeholder="Ex: Sebkha"></div>
-      </div>
-      <div class="form-grid" id="loc-dia" style="display:none">
-        <div class="field"><label>Pays <span class="ar">الدولة</span></label><input type="text" id="pays" placeholder="France..."></div>
-        <div class="field"><label>Ville <span class="ar">المدينة</span></label><input type="text" id="vil" placeholder="Paris"></div>
-        <div class="field ff"><label>Section locale <span class="ar">الفرع المحلي</span></label><input type="text" id="sec" placeholder="Section FRUD de..."></div>
-      </div>
-      <div style="height:14px"></div>
-      <div class="field"><label>Profession <span class="ar">المهنة</span></label>
-        <select id="prof"><option value="">—</option>
-          <option>Étudiant / طالب</option><option>Enseignant / أستاذ</option>
-          <option>Commerçant / تاجر</option><option>Fonctionnaire / موظف</option>
-          <option>Agriculteur / مزارع</option><option>Éleveur / مربي ماشية</option>
-          <option>Professions libérales / حرة</option><option>Sans emploi / بدون عمل</option>
-        </select>
-      </div>
-      <div style="display:flex;gap:10px;margin-top:18px;">
-        <button class="btn-outline" onclick="setStep(1)">← Retour</button>
-        <button class="btn-primary" onclick="setStep(3)" style="flex:1">Continuer →</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- SC3 PAIEMENT -->
-  <div class="screen" id="sc3">
-    <div class="card">
-      <div class="sec-title">Paiement</div>
-      <div class="sec-ar">الدفع</div>
-      <div class="pay-section">
-        <div class="pay-title">💳 Frais d'adhésion — رسوم الانخراط</div>
-        <div><span class="pay-amount-big">50</span> <span style="font-size:16px;color:var(--muted)">Ouguiya / أوقية</span></div>
-        <div class="pay-hint" style="margin-top:10px">Payez par mobile money au numéro :</div>
-        <div class="pay-ar">ادفع عبر الدفع المحمول على الرقم</div>
-        <div class="pay-num">📱 XX XX XX XX</div>
-        <div class="pay-hint">Nom du bénéficiaire : <strong>FRUD-JOD</strong></div>
-        <div class="pay-apps">
-          <div class="pay-app">Bankily</div>
-          <div class="pay-app">Masrivi</div>
-          <div class="pay-app">Sedad</div>
+        
+        <div class="center-content">
+             <svg viewBox="0 0 100 100" style="width: 50px;" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20,80 C30,70 40,40 50,30 C60,20 80,20 85,35 C90,50 70,60 60,80" fill="black"/>
+            </svg>
+            <div style="font-size: 14px; font-weight: bold; margin-top: 5px;">FRUD - Espoir Mauritanie / جود - أمل موريتانيا</div>
+            <div class="card-title">CARTE DE MEMBRE / بطاقة العضوية</div>
         </div>
-      </div>
-      <div class="field">
-        <label>Référence du paiement <span class="ar">مرجع الدفع</span></label>
-        <input type="text" id="pay-ref" placeholder="Numéro de transaction reçu par SMS">
-      </div>
-      <div class="pay-confirm">
-        <input type="checkbox" id="pay-check">
-        <label for="pay-check">Je confirme avoir payé les 50 UM d'adhésion — أؤكد أنني دفعت رسوم الانخراط</label>
-      </div>
-      <div style="display:flex;gap:10px;margin-top:18px;">
-        <button class="btn-outline" onclick="setStep(2)">← Retour</button>
-        <button class="btn-primary" onclick="submitForm()" style="flex:1">Valider l'inscription ✓</button>
-      </div>
-    </div>
-  </div>
 
-  <!-- SC4 CARTE -->
-  <div class="screen" id="sc4">
-    <div class="card">
-      <div class="suc-ico">✅</div>
-      <div class="suc-title">Inscription validée !</div>
-      <div class="suc-sub">تم التسجيل بنجاح — Votre carte officielle est prête</div>
-      <div id="card-wrap">
-        <div id="mem-card">
-          <div class="mc-rouge-top"></div>
-          <div class="mc-head">
-            <div class="mc-head-left">
-              <strong>Republique Islamique de Mauritanie</strong>
-              Honneur · Fraternité · Justice
-              <span style="font-family:'Noto Sans Arabic',sans-serif;font-size:9px;display:block;margin-top:2px">الجمهورية الإسلامية الموريتانية<br>شرف - إخاء - عدل</span>
-            </div>
-            <div class="mc-center">
-              <div class="mc-horse-sm">
-                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                  <path fill="#111" d="M155,38c-4-3-9-3-13,1l-6,6c-4-6-11-10-17-10c-5,0-9,2-11,5l-17-4c-7-2-13,0-17,5c-4,4-4,10-2,15l4,8c-6,4-10,11-10,19c0,7,3,13,7,17l-10,32c-2,6,0,12,4,14c3,2,6,1,9-1l13-21l4,6l-6,19c-2,6,0,11,4,13c3,2,7,1,9-2l10-19l6,2l2,17c0,5,4,8,8,8c5,0,8-4,8-8l-2-25c4-2,8-6,10-11l17,6c6,2,12,0,14-6c2-5,0-10-4-13l-13-6c2-4,2-8,0-12l8-10c6-6,6-15,4-21C161,43,158,40,155,38z"/>
-                </svg>
-              </div>
-              <div class="mc-jod">جود — FRUD</div>
-              <div class="rouge-line-sm"></div>
-              <div class="mc-jod-ar">FRUD - Espoir Mauritanie</div>
-              <div class="mc-jod-fr">FRONT RÉPUBLICAIN POUR L'UNITÉ ET DÉMOCRATIE</div>
-            </div>
-            <div class="mc-stamp">
-              <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="50" r="47" fill="none" stroke="#1a4fa0" stroke-width="2.5"/>
-                <circle cx="50" cy="50" r="39" fill="none" stroke="#1a4fa0" stroke-width="1"/>
-                <text x="50" y="48" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="9" font-weight="700" fill="#1a4fa0">FRUD جود</text>
-                <text x="50" y="58" text-anchor="middle" font-family="Noto Sans Arabic,sans-serif" font-size="7" fill="#1a4fa0">للوحدة والديمقراطية</text>
-                <path id="arc1" fill="none" d="M12,50 A38,38 0 0,1 88,50"/>
-                <path id="arc2" fill="none" d="M12,52 A38,38 0 0,0 88,52"/>
-                <text font-size="7.5" fill="#1a4fa0" font-family="Barlow Condensed,sans-serif" font-weight="600"><textPath href="#arc1" startOffset="3%">FRONT RÉPUBLICAIN POUR L'UNITÉ</textPath></text>
-                <text font-size="7.5" fill="#1a4fa0" font-family="Barlow Condensed,sans-serif" font-weight="600"><textPath href="#arc2" startOffset="8%">ET LA DÉMOCRATIE ★ ★</textPath></text>
-              </svg>
-            </div>
-          </div>
-          <div class="mc-titre-box">
-            <div class="mc-titre-ar">بطاقة العضوية</div>
-            <div class="mc-titre-fr">CARTE DE MEMBRE</div>
-          </div>
-          <div class="mc-body">
-            <div class="mc-fields">
-              <div class="mc-row"><span class="mc-lbl">Nom & Prénom :</span><span class="mc-val" id="mc-name">—</span><span class="mc-lbl-ar">: الاسم واللقب</span></div>
-              <div class="mc-row"><span class="mc-lbl">Wilaya :</span><span class="mc-val" id="mc-wilaya">—</span><span class="mc-lbl-ar">: ولاية</span></div>
-              <div class="mc-row"><span class="mc-lbl">Moughataa :</span><span class="mc-val" id="mc-mou">—</span><span class="mc-lbl-ar">: مقاطعة</span></div>
-              <div class="mc-row"><span class="mc-lbl">Commune :</span><span class="mc-val" id="mc-com">—</span><span class="mc-lbl-ar">: بلدية</span></div>
-              <div class="mc-row"><span class="mc-lbl">Quartier/Village :</span><span class="mc-val" id="mc-qrt">—</span><span class="mc-lbl-ar">: الحي/القرية</span></div>
-              <div class="mc-row"><span class="mc-lbl">N° CIN :</span><span class="mc-val" id="mc-cin">—</span><span class="mc-lbl-ar">: رقم CIN</span></div>
-            </div>
-            <div class="mc-right">
-              <div class="mc-photo-box" id="mc-photo-box">👤</div>
-              <div class="mc-qr-box" id="mc-qr"></div>
-            </div>
-          </div>
-          <div class="mc-footer">
-            <div class="mc-num-id">N° <strong id="mc-id">FM-0000-0000</strong></div>
-            <div class="mc-president">
-              <div class="mc-president-ar">الرئيس</div>
-              <div class="mc-president-fr">PRESIDENT</div>
-              <div class="mc-sign"></div>
-            </div>
-            <div class="mc-exp" id="mc-exp">2026</div>
-          </div>
-          <div class="mc-rouge-bot"></div>
+        <div style="margin-top: 30px;">
+            <div class="info-row"><span>Nom & Prenom : <b id="resNom"></b></span> <span dir="rtl">الاسم واللقب :</span></div>
+            <div class="info-row"><span>Wilaya : <b id="resWilaya"></b></span> <span dir="rtl">ولاية :</span></div>
+            <div class="info-row"><span>N° CIN : <b id="resNni"></b></span> <span dir="rtl">رقم CIN :</span></div>
         </div>
-      </div>
-      <div class="act-row">
-        <button class="btn-rouge" onclick="dlPDF()">⬇ Télécharger PDF</button>
-        <button class="btn-outline" onclick="shareCard()">↗ Partager</button>
-      </div>
-      <div class="divider"></div>
-      <div style="text-align:center"><button class="btn-outline" onclick="resetAll()">+ Autre membre</button></div>
+
+        <div class="president-box">
+            PRÉSIDENT / الرئيس<br><br>____________________
+        </div>
+
+        <div class="footer-red"></div>
     </div>
-  </div>
-</div>
-</main>
-<div class="toast" id="toast"></div>
 
-<script>
-const SUPA_URL='https://sndamkcjaexxmvimobbg.supabase.co';
-const SUPA_KEY='sb_publishable_c9yp6ZBGQy943ti3ZY9Z3A_SZHa6YiJ';
+    <script>
+        const nni = document.getElementById('nni');
+        const nom = document.getElementById('nom');
+        const wilaya = document.getElementById('wilaya');
+        const btn = document.getElementById('btnSubmit');
 
-async function supa(method,path,body){
-  const res=await fetch(SUPA_URL+path,{method,headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':method==='PATCH'?'return=minimal':''},body:body?JSON.stringify(body):undefined});
-  if(method==='PATCH') return res.ok;
-  return res.json();
-}
+        function checkForm() {
+            if (nni.value.length === 10 && nom.value.trim().length > 3 && wilaya.value !== "") {
+                btn.disabled = false;
+                btn.classList.add('active');
+            } else {
+                btn.disabled = true;
+                btn.classList.remove('active');
+            }
+        }
 
-async function loadCount(){
-  try{const d=await supa('GET','/rest/v1/codes?select=code&used=eq.true');document.getElementById('cnt-stat').textContent=Array.isArray(d)?d.length:'—';}catch(e){document.getElementById('cnt-stat').textContent='—';}
-}
+        [nni, nom, wilaya].forEach(input => input.addEventListener('input', checkForm));
 
-let tries=0,locked=false,cdInterval=null,mtype='int',photoData=null,cnt=1000;
-const MAX=5,LOCK=120;
-
-function ci(i){const el=document.getElementById('c'+i);el.value=el.value.toUpperCase();if(el.value)el.classList.add('filled');else el.classList.remove('filled');if(el.value&&i<5)document.getElementById('c'+(i+1)).focus();if(i===5&&el.value)verifyCode();}
-function ck(e,i){if(e.key==='Backspace'&&!document.getElementById('c'+i).value&&i>0)document.getElementById('c'+(i-1)).focus();if(e.key==='Enter')verifyCode();}
-function getCode(){return[0,1,2,3,4,5].map(i=>document.getElementById('c'+i).value).join('');}
-function setMsg(t,c){const m=document.getElementById('msg');m.className='msg-area '+c;m.innerHTML=t;}
-
-async function verifyCode(){
-  if(locked)return;
-  const code=getCode();
-  if(code.length<6){setMsg('Entrez les 6 caractères.','msg-info');return;}
-  document.getElementById('btn-v').disabled=true;
-  setMsg('<span class="spinner"></span> Vérification...','msg-info');
-  try{
-    const data=await supa('GET',`/rest/v1/codes?code=eq.${code}&select=code,used`);
-    if(!data||data.length===0){document.getElementById('btn-v').disabled=false;flashErr();tries++;const r=MAX-tries;if(r<=0){lockGate();return;}setMsg(`❌ Code invalide. <strong>${r}</strong> tentative${r>1?'s':''} restante${r>1?'s':''}.`,'msg-err');return;}
-    if(data[0].used===true){document.getElementById('btn-v').disabled=false;flashErr();setMsg('❌ Ce code a déjà été utilisé. Demandez un nouveau code.','msg-err');return;}
-    await supa('PATCH',`/rest/v1/codes?code=eq.${code}`,{used:true,used_at:new Date().toISOString()});
-    document.getElementById('gate').style.display='none';
-    document.getElementById('form-area').style.display='block';
-    loadCount();
-    toast('🔓 Accès autorisé — Bienvenue !');
-  }catch(e){document.getElementById('btn-v').disabled=false;setMsg('⚠️ Erreur de connexion. Vérifiez votre internet.','msg-err');}
-}
-
-function flashErr(){for(let i=0;i<6;i++){const b=document.getElementById('c'+i);b.classList.add('err');setTimeout(()=>b.classList.remove('err'),380);b.value='';b.classList.remove('filled');}document.getElementById('c0').focus();}
-
-function lockGate(){
-  locked=true;for(let i=0;i<6;i++)document.getElementById('c'+i).disabled=true;
-  document.getElementById('btn-v').disabled=true;document.getElementById('lock-box').style.display='block';setMsg('','');
-  let s=LOCK;document.getElementById('cd').textContent=fmt(s);
-  cdInterval=setInterval(()=>{s--;document.getElementById('cd').textContent=fmt(s);if(s<=0){clearInterval(cdInterval);unlockGate();}},1000);
-}
-function unlockGate(){locked=false;tries=0;for(let i=0;i<6;i++){const b=document.getElementById('c'+i);b.disabled=false;b.value='';b.classList.remove('filled','err');}document.getElementById('btn-v').disabled=false;document.getElementById('lock-box').style.display='none';document.getElementById('c0').focus();}
-function fmt(s){return Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60;}
-
-function pickType(el,t){mtype=t;document.querySelectorAll('.type-opt').forEach(o=>o.classList.remove('sel'));el.classList.add('sel');document.getElementById('loc-int').style.display=t==='int'?'grid':'none';document.getElementById('loc-dia').style.display=t==='dia'?'grid':'none';}
-
-function prevPh(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{photoData=ev.target.result;const img=document.getElementById('photo-prev');img.src=photoData;img.style.display='block';document.getElementById('ph-ico').style.display='none';document.getElementById('ph-txt').textContent='✓ Photo ajoutée';};r.readAsDataURL(f);}
-
-function setStep(n){
-  for(let i=1;i<=4;i++){const s=document.getElementById('st'+i);if(!s)continue;s.classList.remove('active','done');if(i<n)s.classList.add('done');if(i===n)s.classList.add('active');}
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById('sc'+n).classList.add('active');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function next2(){if(!document.getElementById('nom').value.trim()||!document.getElementById('pre').value.trim()){toast('⚠️ Nom et prénom obligatoires');return;}setStep(2);}
-function genId(){cnt++;return 'FM-'+new Date().getFullYear()+'-'+String(cnt).padStart(4,'0');}
-
-function submitForm(){
-  if(!document.getElementById('pay-check').checked){toast('⚠️ Veuillez confirmer le paiement');return;}
-  const nom=document.getElementById('nom').value.trim();const pre=document.getElementById('pre').value.trim();
-  if(!nom||!pre){toast('⚠️ Informations manquantes');setStep(1);return;}
-  const id=genId();
-  document.getElementById('mc-name').textContent=pre+' '+nom;
-  document.getElementById('mc-id').textContent=id;
-  document.getElementById('mc-cin').textContent=document.getElementById('nni').value||'—';
-  if(mtype==='int'){
-    document.getElementById('mc-wilaya').textContent=document.getElementById('wilaya').value||'—';
-    document.getElementById('mc-mou').textContent=document.getElementById('mou').value||'—';
-    document.getElementById('mc-com').textContent=document.getElementById('com').value||'—';
-    document.getElementById('mc-qrt').textContent=document.getElementById('qrt').value||'—';
-  }else{
-    document.getElementById('mc-wilaya').textContent=document.getElementById('pays').value||'—';
-    document.getElementById('mc-mou').textContent=document.getElementById('vil').value||'—';
-    document.getElementById('mc-com').textContent='Diaspora';document.getElementById('mc-qrt').textContent='—';
-  }
-  if(photoData){document.getElementById('mc-photo-box').innerHTML=`<img src="${photoData}" style="width:100%;height:100%;object-fit:cover;">`;}
-  const qrc=document.getElementById('mc-qr');qrc.innerHTML='';
-  new QRCode(qrc,{text:'FRUD-JOD|'+id+'|'+nom+' '+pre,width:44,height:44,colorDark:'#111',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});
-  document.getElementById('mc-exp').textContent='Valide '+(new Date().getFullYear()+1);
-  toast('✅ Inscription enregistrée !');setStep(4);
-}
-
-async function dlPDF(){
-  toast('📄 Génération PDF...',5000);const{jsPDF}=window.jspdf;
-  try{
-    const canvas=await html2canvas(document.getElementById('mem-card'),{scale:3,useCORS:true,backgroundColor:'#fff',logging:false});
-    const pdf=new jsPDF({orientation:'landscape',unit:'mm',format:[85.6,54]});
-    pdf.addImage(canvas.toDataURL('image/png'),'PNG',0,0,85.6,54);
-    pdf.save('Carte_FRUD-JOD_'+document.getElementById('mc-id').textContent+'.pdf');
-    toast('✅ PDF téléchargé !');
-  }catch(e){toast('⚠️ Erreur PDF.');console.error(e);}
-}
-function shareCard(){if(navigator.share)navigator.share({title:'FRUD-JOD',text:'Carte membre N° '+document.getElementById('mc-id').textContent,url:location.href});else{navigator.clipboard.writeText(location.href);toast('🔗 Lien copié !');}}
-function resetAll(){['nom','pre','nni','tel','mail','mou','com','qrt','pays','vil','sec','pay-ref'].forEach(id=>{try{document.getElementById(id).value='';}catch(e){}});try{document.getElementById('wilaya').value='';document.getElementById('prof').value='';document.getElementById('dob').value='';document.getElementById('gen').value='';}catch(e){}document.getElementById('pay-check').checked=false;photoData=null;document.getElementById('photo-prev').style.display='none';document.getElementById('ph-ico').style.display='block';document.getElementById('ph-txt').textContent='Cliquez pour ajouter une photo';setStep(1);document.querySelectorAll('.type-opt').forEach(o=>o.classList.remove('sel'));document.querySelectorAll('.type-opt')[0].classList.add('sel');mtype='int';document.getElementById('loc-int').style.display='grid';document.getElementById('loc-dia').style.display='none';}
-function setLang(l,e){document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));if(e&&e.target)e.target.classList.add('active');document.documentElement.dir=l==='ar'?'rtl':'ltr';}
-function toast(msg,d=3000){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),d);}
-
-document.getElementById('loc-dia').style.display='none';
-document.getElementById('c0').focus();
-</script>
+        btn.addEventListener('click', () => {
+            document.getElementById('resNom').innerText = nom.value.toUpperCase();
+            document.getElementById('resNni').innerText = nni.value;
+            document.getElementById('resWilaya').innerText = wilaya.value;
+            
+            document.getElementById('formContainer').style.display = 'none';
+            document.getElementById('memberCard').style.display = 'block';
+        });
+    </script>
 </body>
 </html>
