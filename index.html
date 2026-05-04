@@ -3,37 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adhésion FRUD</title>
+    <title>Adhésion FRUD - Mauritanie</title>
     <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; padding: 20px; background-color: #f4f4f4; }
-        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-top: 8px solid #2B4C9B; width: 100%; max-width: 400px; }
-        h2 { text-align: center; color: #2B4C9B; }
-        label { display: block; margin-top: 15px; font-weight: bold; font-size: 12px; }
-        input, select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; margin-top: 20px; background-color: #ccc; color: white; border: none; font-weight: bold; cursor: not-allowed; }
-        .active { background-color: #2B4C9B; cursor: pointer; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background-color: #f0f2f5; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-top: 10px solid #00A95C; width: 100%; max-width: 400px; text-align: center; }
+        .logo-placeholder { background: #FFD700; width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; border: 3px solid #00A95C; font-weight: bold; color: #00A95C; }
+        h2 { color: #00A95C; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        p { color: #666; font-size: 14px; margin-bottom: 25px; }
+        .form-group { text-align: left; margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 12px; color: #333; }
+        input, select { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; transition: border-color 0.3s; }
+        input:focus { border-color: #FFD700; outline: none; }
+        button { width: 100%; padding: 16px; margin-top: 20px; background-color: #ccc; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: not-allowed; transition: 0.3s; }
+        .active { background-color: #00A95C; cursor: pointer; box-shadow: 0 4px 10px rgba(0,169,92,0.3); }
+        .active:hover { background-color: #00874a; }
+        .flag-line { height: 4px; width: 100px; background: linear-gradient(to right, #00A95C, #FFD700, #00A95C); margin: 10px auto; }
     </style>
 </head>
 <body>
     <div class="card">
+        <div class="logo-placeholder">FRUD</div>
         <h2>ADHÉSION FRUD</h2>
-        <label>NOM & PRÉNOM</label>
-        <input type="text" id="nom" placeholder="Votre nom complet">
+        <div class="flag-line"></div>
+        <p>Unité - Justice - Égalité</p>
         
-        <label>NNI (10 CHIFFRES)</label>
-        <input type="text" id="nni" maxlength="10" placeholder="Ex: 1234567890">
+        <div class="form-group">
+            <label>NOM & PRÉNOM</label>
+            <input type="text" id="nom" placeholder="Saisir votre nom complet">
+        </div>
         
-        <label>WILAYA</label>
-        <select id="wilaya">
-            <option value="">Choisir...</option>
-            <option>Nouakchott Ouest</option>
-            <option>Nouakchott Nord</option>
-            <option>Nouakchott Sud</option>
-            <option>Trarza</option>
-            <option>Brakna</option>
-        </select>
+        <div class="form-group">
+            <label>NNI (10 CHIFFRES)</label>
+            <input type="text" id="nni" maxlength="10" placeholder="Ex: 1234567890">
+        </div>
+        
+        <div class="form-group">
+            <label>WILAYA DE RÉSIDENCE</label>
+            <select id="wilaya">
+                <option value="">Choisir votre Wilaya...</option>
+                <option>Adrar</option><option>Assaba</option><option>Brakna</option>
+                <option>Dakhlet Nouadhibou</option><option>Gorgol</option><option>Guidimagha</option>
+                <option>Hodh Ech Chargui</option><option>Hodh El Gharbi</option><option>Inchiri</option>
+                <option>Nouakchott Nord</option><option>Nouakchott Ouest</option><option>Nouakchott Sud</option>
+                <option>Tagant</option><option>Tiris Zemmour</option><option>Trarza</option>
+            </select>
+        </div>
 
-        <button id="btn" disabled>CONTINUER</button>
+        <button id="btn" disabled>REJOINDRE LE MOUVEMENT</button>
     </div>
 
     <script>
@@ -44,7 +60,7 @@
 
         function verifier() {
             const isNniValid = nniInput.value.length === 10;
-            const isFormValid = isNniValid && nomInput.value.length > 2 && wilayaInput.value !== "";
+            const isFormValid = isNniValid && nomInput.value.trim().length > 3 && wilayaInput.value !== "";
             
             if (isFormValid) {
                 btn.disabled = false;
